@@ -390,16 +390,25 @@
             typingIndicator.classList.add('active');
             scrollToBottom();
 
-            // Simulate bot response (later this will call Make.com webhook)
-            setTimeout(() => {
-                typingIndicator.classList.remove('active');
-                
-                // Placeholder response
-                const botResponse = "Gracias por tu mensaje. Estoy procesando tu solicitud...";
-                addMessage(botResponse, 'bot');
-                
-                scrollToBottom();
-            }, 1500);
+            // Call Make.com webhook
+fetch('https://hook.us2.make.com/tpeuxt2ne3nf4o3d1e1mkj2y1ew437id', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ message: message })
+})
+.then(response => response.text())
+.then(data => {
+    typingIndicator.classList.remove('active');
+    addMessage(data, 'bot');
+    scrollToBottom();
+})
+.catch(error => {
+    typingIndicator.classList.remove('active');
+    addMessage('Sorry, I could not connect to the server. Please try again.', 'bot');
+    scrollToBottom();
+});
         }
 
         // Add message to chat
